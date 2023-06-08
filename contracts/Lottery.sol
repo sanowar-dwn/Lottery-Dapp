@@ -2,7 +2,7 @@
 
 pragma solidity ^0.6.6;
 
-import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
 
 contract Lottery {
     address payable[] public players;
@@ -18,7 +18,15 @@ contract Lottery {
         players.push(msg.sender);
     }
 
-    function GetEntranceFee() public view returns(uint256) {}
+    function getEntranceFee() public view returns(uint) {
+        (, int answer , , ,) = ethUsdPriceFeed.latestRoundData();
+
+        uint256 convertedPrice = uint256(answer) * 10**10; //18 decimals
+
+        uint entryCost = (uint(EntryFee) * 10**18 ) / uint(answer);
+
+        return entryCost;
+    }
 
     function startLottery() public {}
 
